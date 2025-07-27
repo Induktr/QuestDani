@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary-accent: #00FFD1;
+  --color-secondary-accent: #FF00E6;
+  --color-success: #39FF14;
+  --color-error: #FF1D15;
+  --color-background: #121212;
+  --color-surface: #1E1E1E;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #AAAAAA;
+  --font-heading: 'Pusab';
+}
+
+@font-face {
+  font-family: 'Pusab';
+  src: url('/fonts/PUSAB.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Roblox2017';
+  src: url('/fonts/OLDROBLOX.ttf') format('truetype');
+}
+
+body {
+  background: var(--color-background);
+  font-family: 'Pusab' sans-serif;
+}
