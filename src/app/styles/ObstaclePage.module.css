@@ -1,0 +1,104 @@
+/* Бесконечная прокрутка */
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.scrollingContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%; /* Двойная ширина для бесшовной прокрутки */
+  height: 100px; /* Высота земли и шипов */
+  display: flex;
+  animation: scroll-left 8s linear infinite; /* 8 секунд на полный цикл */
+  z-index: 1; /* Ниже чем кубик (z-index: 10) */
+}
+
+.gameWorld {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Высота игрового мира */
+  overflow: hidden;
+}
+
+.playerContainer {
+  position: absolute;
+  bottom: 0; /* Начинается на "земле" */
+  left: 15%; /* Отступ слева */
+  z-index: 10;
+  height: 100px; /* Высота, чтобы y: -20 было на земле */
+  display: flex;
+  align-items: flex-end;
+}
+
+.motionTrailContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px; /* Та же высота, что и у playerContainer */
+  z-index: 5; /* Под игроком, но над землей */
+  overflow: hidden;
+}
+
+@keyframes trail-move {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -200; /* Длина штриха + пробел */
+  }
+}
+
+.trailLine {
+  stroke: var(--color-primary-accent);
+  stroke-width: 4;
+  stroke-dasharray: 100 100; /* Длина штриха и пробела */
+  animation: trail-move 2s linear infinite;
+}
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px; /* Высота "земли" */
+  background: linear-gradient(to top, #3e3e3e, #545454);
+  border-top: 4px solid #6e6e6e;
+  z-index: 5;
+}
+
+.obstacleBlock {
+  min-width: 80px; /* Ширина одного блока, равна ширине кубика */
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.spike {
+  width: 100%;
+  height: 80px; /* Высота шипа */
+  background-image: url('/elements/spikes.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-5px, 5px); }
+  40% { transform: translate(-5px, -5px); }
+  60% { transform: translate(5px, 5px); }
+  80% { transform: translate(5px, -5px); }
+  100% { transform: translate(0); }
+}
+
+.glitch {
+  animation: glitch 0.4s linear;
+}

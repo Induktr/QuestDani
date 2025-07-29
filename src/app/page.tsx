@@ -1,45 +1,69 @@
 "use client";
 
-import Image from "next/image";
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { roboto } from "@/lib/fonts";
 import stylesStart from "./styles/StartScreen.module.css";
-import stylesQuestion from "./styles/QuestionScreen.module.css";
-import QuestionScreen from "@/ui/QuestionScreen";
-import clsx from 'clsx';
-import QuestButton from '@/components/QuestButton';
-import { variantsQuestions } from "@/lib/quetionData";
+import Link from "next/link";
+import { motion, AnimatePresence, stagger } from 'framer-motion';
+import { startQuestData } from '@/lib/startQuestData';
 
 export default function StartScreen() {
-  const [currentScreen, setCurrentScreen] = useState('');
-  const [currentCountQuest, setCurrentCountQuest] = useState<number>(0);
+  const [statusElements, setStatusElements] = useState
+  <
+  "inactive" | "active" | "completed"
+  >
+  (
+    "inactive"
+  );
 
-  const handleNextScreen = () => {
-    setCurrentScreen('questionScreen');
-    setCurrentCountQuest(curr => curr + 1);
+  const variantVisible = {
+    visible: {
+      opacity: 1,
+      transition: {
+        when: 'beforeChildren',
+        delayChildren: stagger(0.1),
+        duration: 0.1,
+        times: [0, 0.1, 0.2]
+      },
+      x: 1,
+      y: 5,
+      scale: 1.1
+    },
+    hidden: {
+      opacity: 0,
+      transition: {
+        when: 'afterChildren',
+        delayChildren: stagger(0.1),
+      },
+      speed: 10,
+    }
   }
   return (
     <div className="block h-screen max-w-5xl mx-auto">
-      {currentScreen && (
-        <div className="flex flex-col">
-          <QuestionScreen titleQuestion={variantsQuestions[0].question}>
-            {currentCountQuest === 1 && (
-              <div>
-                {variantsQuestions[0].answers.map(variant => (
-                  <div key={variant}>
-                    <QuestButton text={variant}/>
-                  </div>
-                ))}
-              </div>
-            )}
-          </QuestionScreen>
-        </div>
-      )}
-      <div className={clsx("flex flex-col h-full px-12 py-18 justify-center", {
-        "hidden": currentScreen === 'questionScreen'
-      })}>
-        <h1 className={`${roboto.className} text-[var(--color-text-primary)] text-center text-2xl lg:text-5xl md:text-4xl sm:text-3xl`}>Секретне повідомлення для Дані</h1>
-        <button onClick={handleNextScreen} className={`${stylesStart.startQuest} w-full max-w-[200px] lg:max-w-[268px] md:max-w-[260px] sm:max-w-[250px] mx-auto mt-20 lg:min-h-[66px] min-h-[45px] md:min-h-[60px] sm:min-h-[50px] text-[var(--color-text-secondary)] text-[14px] lg:text-2xl md:text-xl bg-[var(--color-primary-accent)] rounded-[10px] cursor-pointer`}>Start the quest</button>
+      <div className="flex flex-col h-full px-12 py-18 justify-center">
+        <AnimatePresence>
+          <motion.h1 
+            className={`${roboto.className} text-[var(--color-text-primary)] text-center text-2xl lg:text-5xl md:text-4xl sm:text-3xl`}
+          >
+            {startQuestData.h1}
+          </motion.h1>
+          <motion.div
+            animate={statusElements}
+            variants={variantVisible}
+            whileInView={{ x: 2, y: 3 }}
+            whileTap={{ scale: 0.8, y: 1 }}
+            whileHover="visible"
+            exit="hidden"
+            className="text-center transform-3d flex flex-col justify-center w-full max-w-[200px] lg:max-w-[268px] md:max-w-[260px] sm:max-w-[250px] mx-auto mt-20 lg:min-h-[66px] min-h-[45px] md:min-h-[60px] sm:min-h-[50px] text-[var(--color-text-secondary)] text-[14px] lg:text-2xl md:text-xl bg-[var(--color-primary-accent)] border-4 border-[var(--color-text-secondary)] hover:border-[var(--color-secondary-accent)] hover:text-[var(--color-secondary-accent)]  transition duration-300 rounded-[10px] cursor-pointer"
+          >
+            <Link 
+              href="./question" 
+              className={`${stylesStart.startQuest}`}
+            >
+              {startQuestData.inscriptionBtn}
+            </Link>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
