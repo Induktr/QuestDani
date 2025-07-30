@@ -8,6 +8,7 @@ import { useAudio } from '@/hooks/useAudio';
 import { pusab } from '@/lib/fonts';
 import styles from '@/app/styles/ObstaclePage.module.css';
 import { MotionTrail } from '@/components/MotionTrail';
+import { Explosion } from '@/components/Explosion';
 
 const levelData = [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0];
 const JUMPS_TO_WIN = 5;
@@ -16,12 +17,15 @@ const ObstaclePage = () => {
     const [gamePhase, setGamePhase] = useState<'intro' | 'countdown' | 'playing' | 'lost' | 'won'>('intro');
     const [countdown, setCountdown] = useState(3);
     const [successfulJumps, setSuccessfulJumps] = useState(0);
-    const [clearedSpikes, setClearedSpikes] = useState<number[]>([]);
+    const [isJumping, setIsJumping] = useState(false);
+    const [isExploding, setIsExploding] = useState(false);
+    const [isMusicStarted, setIsMusicStarted] = useState(false);
     
     const router = useRouter();
     const cubeControls = useAnimationControls();
     const trailControls = useAnimationControls();
     const { play, pause } = useAudio('/audio/stereo_madness.mp3');
+    const { play: playDeathSound } = useAudio('/audio/Death_Sound_Effect.mp3');
     
     const cubeRef = useRef<HTMLDivElement>(null);
     const obstaclesRef = useRef<HTMLDivElement>(null);
@@ -29,8 +33,9 @@ const ObstaclePage = () => {
 
     const resetGameState = useCallback(() => {
         setSuccessfulJumps(0);
-        setClearedSpikes([]);
-        cubeControls.start({ y: -20, rotate: 0 });
+        setIsJumping(false);
+        setIsExploding(false);
+        cubeControls.start({ y: 0, rotate: 0, scale: 1, opacity: 1 });
         if(obstaclesRef.current) {
             obstaclesRef.current.style.animation = 'none';
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -44,9 +49,10 @@ const ObstaclePage = () => {
             const timer = setTimeout(() => setGamePhase('countdown'), 4000); // Увеличиваем время для чтения
             return () => clearTimeout(timer);
         }
-        if (gamePhase === 'playing') play();
-        else pause();
-    }, [gamePhase, play, pause]);
+        if (gamePhase !== 'playing') {
+            pause();
+        }
+    }, [gamePhase, pause]);
 
     useEffect(() => {
         if (gamePhase === 'countdown' && countdown > 0) {
@@ -60,16 +66,34 @@ const ObstaclePage = () => {
     }, [gamePhase, countdown, resetGameState]);
 
     const handleJump = async () => {
-        if (gamePhase !== 'playing') return;
+        if (gamePhase !== 'playing' || isJumping) return;
+
+        if (!isMusicStarted) {
+            play();
+            setIsMusicStarted(true);
+        }
+
+        setIsJumping(true);
         setSuccessfulJumps(s => s + 1);
-        await Promise.all([
-            cubeControls.start({
-                y: [-20, -140, -20],
-                rotate: [0, 180, 360],
-                transition: { type: 'spring', stiffness: 500, damping: 20, duration: 0.7 }
-            }),
-            trailControls.start('visible').then(() => trailControls.start('exit'))
-        ]);
+
+        // Запускаем след и анимацию прыжка параллельно
+        trailControls.start('visible').then(() => trailControls.start('exit'));
+
+        // Этап 1: Прыжок вверх
+        await cubeControls.start({
+            y: -120,
+            rotate: 90,
+            transition: { type: 'spring', stiffness: 400, damping: 25 }
+        });
+
+        // Этап 2: Падение вниз
+        await cubeControls.start({
+            y: 0,
+            rotate: 0,
+            transition: { type: 'spring', stiffness: 400, damping: 25 }
+        });
+
+        setIsJumping(false);
     };
 
     const restartGame = (e: React.MouseEvent) => {
@@ -102,6 +126,12 @@ const ObstaclePage = () => {
                     cubeRect.top < spikeRect.bottom &&
                     cubeRect.bottom > spikeRect.top
                 ) {
+                    playDeathSound();
+                    cubeControls.start({
+                        opacity: 0,
+                        transition: { duration: 0.01 }
+                    });
+                    setIsExploding(true);
                     setGamePhase('lost');
                     return; // Выходим из цикла и функции, если столкновение найдено
                 }
@@ -126,52 +156,70 @@ const ObstaclePage = () => {
     }, [gamePhase, styles.spike]);
 
     return (
-        <div className={`flex flex-col justify-center items-center min-h-screen bg-[var(--color-background)] p-5 text-center overflow-hidden relative ${gamePhase === 'playing' ? 'cursor-pointer' : 'cursor-default'}`} onClick={handleJump}>
-            
-            <AnimatePresence>
-                {gamePhase === 'intro' && (
-                    <motion.h1 key="intro" className="text-4xl text-white font-heading max-w-2xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        Завдання: &quot;Натисни на кубик 5 разів, щоб він перестрибнув шпильки!&quot;.
-                    </motion.h1>
-                )}
-                {gamePhase === 'countdown' && countdown > 0 && (
-                     <motion.h1 key={countdown} /* ... */>{countdown}</motion.h1>
-                )}
-            </AnimatePresence>
+        <div className="min-h-screen bg-[var(--color-background)] text-white overflow-hidden">
+            {/* Контейнер для UI-элементов (сообщений, обратного отсчета), которые не влияют на игру */}
+            <div className="absolute inset-0 flex flex-col justify-center items-center text-center z-20 pointer-events-none">
+                <AnimatePresence>
+                    {gamePhase === 'intro' && (
+                        <motion.h1 key="intro" className="text-4xl font-heading max-w-2xl p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            Завдання: &quot;Натисни на кубик 5 разів, щоб він перестрибнув шпильки!&quot;.
+                        </motion.h1>
+                    )}
+                    {gamePhase === 'countdown' && countdown > 0 && (
+                         <motion.h1 key={countdown} className="text-9xl font-bold" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 1.5, opacity: 0 }}>{countdown}</motion.h1>
+                    )}
+                    {gamePhase === 'lost' && (
+                         <motion.div className="pointer-events-auto bg-black bg-opacity-50 p-8 rounded-lg flex flex-col gap-4" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+                            <h2 className="text-6xl font-bold text-red-500">ПОРАЗКА</h2>
+                            <button onClick={restartGame} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Спробувати знову</button>
+                        </motion.div>
+                    )}
+                     {gamePhase === 'won' && (
+                         <motion.div className="bg-black bg-opacity-50 p-8 rounded-lg" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+                            <h2 className="text-6xl font-bold text-green-500">ПЕРЕМОГА!</h2>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
+            {/* Главный игровой контейнер: полноэкранный, с обработчиком клика */}
             <AnimatePresence>
                 {(gamePhase === 'playing' || gamePhase === 'lost' || gamePhase === 'won') && (
-                    <motion.div key="game-world" className={styles.gameWorld} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                        <div className={styles.playerContainer}>
-                            <motion.div ref={cubeRef} animate={cubeControls} className="relative">
-                                <div className={`absolute -top-10 left-1/2 -translate-x-1/2 text-5xl font-bold text-white ${gamePhase === 'lost' ? styles.glitch : ''} ${pusab.className}`}>
-                                    {JUMPS_TO_WIN - successfulJumps}
+                    <motion.div
+                        key="game-container"
+                        className="w-screen h-screen relative overflow-hidden cursor-pointer"
+                        onClick={handleJump}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <div className={styles.gameWorld}>
+                            <motion.div
+                                ref={cubeRef}
+                                animate={cubeControls}
+                                className="absolute z-10"
+                                style={{ left: '15%', bottom: '20%' }} // Позиция относительно земли в flex-контейнере
+                            >
+                                <div className={`absolute -top-14 right-14 -translate-x-1/2 text-5xl font-bold ${gamePhase === 'lost' ? styles.glitch : ''} ${pusab.className}`}>
+                                    {JUMPS_TO_WIN - successfulJumps > 0 ? JUMPS_TO_WIN - successfulJumps : ''}
                                 </div>
-                                <Image src="/elements/cube.svg" alt="Cube" width={80} height={80} draggable="false" />
+                                {/* Адаптивный размер кубика через Tailwind классы */}
+                                <Image src="/elements/cube.svg" alt="Cube" width={64} height={64} className="w-12 h-12 md:w-16 md:h-16" draggable="false" />
+                                {isExploding && <Explosion />}
                             </motion.div>
-                        </div>
-                        <MotionTrail trailControls={trailControls} />
-                        <div ref={obstaclesRef} className={styles.scrollingContainer} style={{ animationPlayState: gamePhase === 'playing' ? 'running' : 'paused' }}>
-                            {[...levelData, ...levelData].map((block, index) => (
-                                <div key={index} className={styles.obstacleBlock}>
-                                    {block === 1 && <div className={styles.spike}></div>}
+                            
+                            {/* Новый контейнер для земли и шипов */}
+                            <div className={styles.groundContainer}>
+                                <MotionTrail trailControls={trailControls} />
+                                <div ref={obstaclesRef} className={styles.scrollingContainer} style={{ animationPlayState: gamePhase === 'playing' ? 'running' : 'paused' }}>
+                                    {[...levelData, ...levelData].map((block, index) => (
+                                        <div key={index} className={styles.obstacleBlock}>
+                                            {block === 1 && <div className={styles.spike}></div>}
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                            </div>
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {gamePhase === 'lost' && (
-                     <motion.div /* ... */>
-                        <h2>ПОРАЗКА</h2>
-                        <button onClick={restartGame}>Спробувати знову</button>
-                    </motion.div>
-                )}
-                 {gamePhase === 'won' && (
-                     <motion.div /* ... */>
-                        <h2>ПЕРЕМОГА!</h2>
                     </motion.div>
                 )}
             </AnimatePresence>

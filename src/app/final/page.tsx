@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import Confetti from 'react-confetti';
 import { roboto } from '@/lib/fonts';
+import ScrollingWish from '@/components/ScrollingWish';
+import { useAudio } from '@/hooks/useAudio';
 
 const FinalPage = () => {
+    const { fadeIn } = useAudio('/audio/theoryofeverything.mp3');
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const [showConfetti, setShowConfetti] = useState(false);
-
     useEffect(() => {
         // Устанавливаем размеры окна на клиенте
         setWindowSize({
@@ -48,7 +50,7 @@ const FinalPage = () => {
             transition: {
                 type: 'spring',
                 stiffness: 50,
-                delay: 0.5 + i * 0.2, // Разная задержка для падения
+                delay: 0.1 + i * 0.05, // Разная задержка для падения
             },
         }),
     };
@@ -76,34 +78,42 @@ const FinalPage = () => {
                             height={windowSize.height}
                             numberOfPieces={200}
                             gravity={0.05} // Медленное падение
-                            colors={['#F9E076', '#F2A490', '#88E0EF', '#93F2A3']} // Неоновая палитра
+                            colors={['#00FFD1', '#FF00E6', '#FF1D15', '#39FF14']} // Неоновая палитра
                         />
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <motion.h1
-                className={`text-5xl md:text-7xl text-[var(--color-primary-accent)] mb-5 z-10 ${roboto.className}`}
-                variants={titleVariants}
-                initial="hidden"
-                animate="visible"
-                aria-label={title}
-            >
-                {title.split('').map((char, index) => (
-                    <motion.span key={index} variants={letterVariants} style={{ display: 'inline-block' }}>
-                        {char === ' ' ? '\u00A0' : char}
-                    </motion.span>
-                ))}
-            </motion.h1>
+            <div className="z-10">
+                <motion.h1
+                    className={`text-5xl md:text-7xl text-[var(--color-primary-accent)] mb-5 ${roboto.className}`}
+                    variants={titleVariants}
+                    initial="hidden"
+                    animate="visible"
+                    aria-label={title}
+                    onAnimationComplete={() => {
+                        fadeIn(4000, 0.4); // Плавное включение на 4 секунды до 40% громкости
+                    }}
+                >
+                    {title.split('').map((char, index) => (
+                        <motion.span key={index} variants={letterVariants} style={{ display: 'inline-block' }}>
+                            {char === ' ' ? '\u00A0' : char}
+                        </motion.span>
+                    ))}
+                </motion.h1>
+                <motion.h2
+                    className="text-2xl text-white mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.5, duration: 1 }}
+                >
+                    Ти успішно пройшов квест!
+                </motion.h2>
+            </div>
 
-            <motion.h2 
-                className="text-2xl text-white z-10"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5, duration: 1 }}
-            >
-                Ти успішно пройшов квест!
-            </motion.h2>
+            <div className="z-10 w-full">
+                <ScrollingWish />
+            </div>
 
             {/* Анимированные шарики */}
             {balls.map((ball, i) => (
