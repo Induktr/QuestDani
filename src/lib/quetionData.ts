@@ -99,7 +99,7 @@ export const variantsQuestions: QuestionData = [
       {
         text: 'Так, у нього своя система для планування, в якій він планує не тільки як він намагатиметься заробляти, і він також планує своє життя в цілому.',
         isCorrect: true,
-        layout: 'image-bottom',
+        cardLayout: 'image-bottom',
         images: ['/images/Portfolio1.png', '/images/Portfolio2.png'],
       },
       {
