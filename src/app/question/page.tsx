@@ -11,7 +11,7 @@ import { roboto } from '@/lib/fonts';
 import { QuestCard } from '@/components/QuestCard';
 import { useRouter } from 'next/navigation';
 
-export const QuestionPage = () => {
+const QuestionPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<Answer | null>(null);
   const [answerStatus, setAnswerStatus] = useState<'correct' | 'incorrect' | null>(null);
