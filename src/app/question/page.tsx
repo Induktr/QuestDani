@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { variantsQuestions } from '@/lib/quetionData';
-import type { Answer } from '@/lib/types';
-import { QuestButton } from '@/components/QuestButton';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { variantsQuestions } from '@/shared/lib/constants';
+import type { Answer } from '@/shared/lib/types';
+import { QuestButton } from '@/features/variant-answers/ui/QuestButton';
+import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-import stylesPusab from '@/app/styles/QuestionScreen.module.css';
-import { roboto } from '@/lib/fonts';
-import { QuestCard } from '@/components/QuestCard';
+import { QuestCard } from '@/features/variant-answers/ui/QuestCard';
 import { useRouter } from 'next/navigation';
+import { answerContainerVariants, answerItemVariants } from '@/shared/lib/constants';
+import { AppRoutes } from '@/shared/config/paths';
 
 const QuestionPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -38,7 +38,7 @@ const QuestionPage = () => {
           setSelectedAnswer(null);
           setAnswerStatus(null);
         } else {
-          router.push('../obstacle');
+          router.push(AppRoutes.OBSTACLE);
           console.log("КВЕСТ ЗАВЕРШЕН!");
         }
       }, 1500); // Задержка, чтобы анимация правильного ответа успела проиграться
@@ -50,26 +50,6 @@ const QuestionPage = () => {
         setAnswerStatus(null);
       }, 1500);
     }
-  };
-
-  // Варианты для появления ответов (GD-стиль)
-  const answerContainerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const answerItemVariants: Variants = {
-    hidden: { opacity: 0, y: 50 }, // Вылетают снизу
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 300 }, // С эффектом пружины
-    },
   };
 
   return (

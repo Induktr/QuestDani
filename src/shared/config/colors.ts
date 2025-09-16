@@ -1,0 +1,1 @@
+export const colorsList = ['#00FFD1', '#FF00E6', '#FF1D15', '#39FF14']

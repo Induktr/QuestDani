@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
-import { roboto } from '@/lib/fonts';
-import ScrollingWish from '@/components/ScrollingWish';
-import { useAudio } from '@/hooks/useAudio';
+import ScrollingWish from '@/shared/ui/ScrollingWish/ScrollingWish';
+import { useAudio } from '@/shared/hooks/useAudio';
+import { balls, title, titleVariants, letterVariants, ballVariants } from '@/shared/lib/constants';
+import { SoundList } from '@/shared/config/sounds';
+import { colorsList } from '@/shared/config/colors';
 
 const FinalPage = () => {
-    const { fadeIn } = useAudio('/audio/theoryofeverything.mp3');
+    const { fadeIn } = useAudio(SoundList.THEORY_OF_EVERYTHING);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const [showConfetti, setShowConfetti] = useState(false);
     useEffect(() => {
@@ -20,48 +22,6 @@ const FinalPage = () => {
         // Запускаем конфетти после монтирования компонента
         setShowConfetti(true);
     }, []);
-
-    const title = "З Днем Народження, Даня!";
-    const titleVariants: Variants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.08, // Анимация по буквам
-            },
-        },
-    };
-
-    const letterVariants: Variants = {
-        hidden: { opacity: 0, y: -20, scale: 1.5 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            transition: { type: 'spring', damping: 12, stiffness: 100 },
-        },
-    };
-
-    const ballVariants: Variants = {
-        hidden: { y: '-100vh', opacity: 0 },
-        visible: (i: number) => ({
-            y: 0,
-            opacity: 1,
-            transition: {
-                type: 'spring',
-                stiffness: 50,
-                delay: 0.1 + i * 0.05, // Разная задержка для падения
-            },
-        }),
-    };
-
-    const balls = [
-        { top: '10%', left: '15%', rotate: -15 },
-        { top: '20%', right: '10%', rotate: 15 },
-        { bottom: '15%', left: '20%', rotate: -25 },
-        { bottom: '10%', right: '25%', rotate: 20 },
-    ];
-
     return (
         <div className="flex flex-col justify-center items-center min-h-screen bg-[var(--color-background)] p-5 text-center relative overflow-hidden">
             <AnimatePresence>
@@ -78,7 +38,7 @@ const FinalPage = () => {
                             height={windowSize.height}
                             numberOfPieces={200}
                             gravity={0.05} // Медленное падение
-                            colors={['#00FFD1', '#FF00E6', '#FF1D15', '#39FF14']} // Неоновая палитра
+                            colors={colorsList} // Неоновая палитра
                         />
                     </motion.div>
                 )}
@@ -86,7 +46,7 @@ const FinalPage = () => {
 
             <div className="z-10">
                 <motion.h1
-                    className={`text-5xl md:text-7xl text-[var(--color-primary-accent)] mb-5 ${roboto.className}`}
+                    className="text-5xl md:text-7xl text-[var(--color-primary-accent)] mb-5"
                     variants={titleVariants}
                     initial="hidden"
                     animate="visible"

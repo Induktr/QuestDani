@@ -1,24 +1,8 @@
 import React from 'react';
-import { motion, Variants, useAnimationControls } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styles from '@/app/styles/ObstaclePage.module.css';
-
-interface MotionTrailProps {
-  trailControls: ReturnType<typeof useAnimationControls>;
-}
-
-const trailVariants: Variants = {
-  hidden: { pathLength: 0, opacity: 0 },
-  visible: { 
-    pathLength: 1, 
-    opacity: 1,
-    transition: { duration: 0.2, ease: 'easeOut' } 
-  },
-  exit: { 
-    pathLength: 0, 
-    opacity: 0,
-    transition: { duration: 0.1, ease: 'easeIn' } 
-  },
-};
+import { MotionTrailProps } from '@/shared/lib/types';
+import { TRAIL_VARIANTS } from '@/shared/lib/constants';
 
 export const MotionTrail: React.FC<MotionTrailProps> = ({ trailControls }) => {
   return (
@@ -31,7 +15,7 @@ export const MotionTrail: React.FC<MotionTrailProps> = ({ trailControls }) => {
         {/* Анимированный "след" от прыжка */}
         <motion.path
           d="M 50,98 L 150,98"
-          variants={trailVariants}
+          variants={TRAIL_VARIANTS}
           initial="hidden"
           animate={trailControls}
           stroke="var(--color-secondary-accent)"

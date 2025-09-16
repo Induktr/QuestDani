@@ -4,17 +4,19 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, useAnimationControls, AnimatePresence } from 'framer-motion';
-import { useAudio } from '@/hooks/useAudio';
-import { pusab } from '@/lib/fonts';
+import { useAudio } from '@/shared/hooks/useAudio';
 import styles from '@/app/styles/ObstaclePage.module.css';
-import { MotionTrail } from '@/components/MotionTrail';
-import { Explosion } from '@/components/Explosion';
+import { MotionTrail } from '@/shared/ui/MotionTrail/MotionTrail';
+import { Explosion } from '@/shared/ui/Explosion/Explosion';
+import { levelData } from '@/shared/lib/constants';
+import { AppRoutes } from '@/shared/config/paths';
+import { SoundList } from '@/shared/config/sounds';
+import { GamePhase } from '@/shared/lib/types';
 
-const levelData = [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0];
 const JUMPS_TO_WIN = 5;
 
 const ObstaclePage = () => {
-    const [gamePhase, setGamePhase] = useState<'intro' | 'countdown' | 'playing' | 'lost' | 'won'>('intro');
+    const [gamePhase, setGamePhase] = useState<GamePhase>('intro');
     const [countdown, setCountdown] = useState(3);
     const [successfulJumps, setSuccessfulJumps] = useState(0);
     const [isJumping, setIsJumping] = useState(false);
@@ -24,8 +26,8 @@ const ObstaclePage = () => {
     const router = useRouter();
     const cubeControls = useAnimationControls();
     const trailControls = useAnimationControls();
-    const { play, pause } = useAudio('/audio/stereo_madness.mp3');
-    const { play: playDeathSound } = useAudio('/audio/Death_Sound_Effect.mp3');
+    const { play, pause } = useAudio(SoundList.STEREO_MADNESS);
+    const { play: playDeathSound } = useAudio(SoundList.DEATH_SOUND);
     
     const cubeRef = useRef<HTMLDivElement>(null);
     const obstaclesRef = useRef<HTMLDivElement>(null);
@@ -105,7 +107,7 @@ const ObstaclePage = () => {
     useEffect(() => {
         if (successfulJumps >= JUMPS_TO_WIN) {
             setGamePhase('won');
-            setTimeout(() => router.push('/final'), 1500);
+            setTimeout(() => router.push(AppRoutes.FINAL), 1500);
         }
     }, [successfulJumps, router]);
 
@@ -200,7 +202,7 @@ const ObstaclePage = () => {
                                 className="absolute z-10"
                                 style={{ left: '15%', bottom: '20%' }} // Позиция относительно земли в flex-контейнере
                             >
-                                <div className={`absolute -top-14 right-14 -translate-x-1/2 text-5xl font-bold ${gamePhase === 'lost' ? styles.glitch : ''} ${pusab.className}`}>
+                                <div className={`absolute -top-14 right-14 -translate-x-1/2 text-5xl font-bold ${gamePhase === 'lost' ? styles.glitch : ''}`}>
                                     {JUMPS_TO_WIN - successfulJumps > 0 ? JUMPS_TO_WIN - successfulJumps : ''}
                                 </div>
                                 {/* Адаптивный размер кубика через Tailwind классы */}

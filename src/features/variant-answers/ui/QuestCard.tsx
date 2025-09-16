@@ -1,21 +1,8 @@
 import React from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
 import clsx from 'clsx';
 import Image from 'next/image';
-import { DecorativeImage } from '@/lib/types';
-
-interface QuestCardProps {
-  text: string;
-  avatar?: string;
-  images?: string | string[]; // Контентное
-  backgroundImages?: DecorativeImage[]; // Возвращаем декоративные иконки
-  backgroundImage?: string | string[]; // Полноразмерный фон
-  isSelected: boolean;
-  status: 'correct' | 'incorrect' | null;
-  cardLayout?: 'default' | 'image-bottom';
-}
-
-type DivProps = QuestCardProps & Omit<HTMLMotionProps<'div'>, 'children'>;
+import { DivProps } from '@/features/variant-answers/model/card.types';
+import ContainerCard from '@/widgets/ContainerCard/ContainerCard';
 
 export const QuestCard: React.FC<DivProps> = ({
   text,
@@ -32,7 +19,7 @@ export const QuestCard: React.FC<DivProps> = ({
   const isDecorativeCard = backgroundImages && backgroundImages.length > 0;
 
   return (
-    <motion.div
+    <ContainerCard
       whileTap={{ scale: 0.97 }}
       className={clsx(
         'h-full w-full md:w-[507px] flex flex-col border-4 border-[var(--color-text-secondary)] hover:border-[var(--color-secondary-accent)] bg-[var(--color-primary-accent)] rounded-lg cursor-pointer transition-all duration-300 relative overflow-hidden p-4 md:p-4',
@@ -134,7 +121,7 @@ export const QuestCard: React.FC<DivProps> = ({
           {text}
         </span>
       </div>
-    </motion.div>
+    </ContainerCard>
   );
 };
 

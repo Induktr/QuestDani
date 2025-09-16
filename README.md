@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wisdom Forge - Создавай и Проходи Квесты Мудрости
 
-## Getting Started
+## 1. Введение: Построение Системы для Роста
 
-First, run the development server:
+Добро пожаловать в репозиторий "Wisdom Forge". Это не просто игра. Это целенаправленно созданная **платформа для создания и прохождения осмысленных интерактивных квестов**, которая призвана стать **ключевым цифровым АКТИВОМ (Принцип 10)** для каждого пользователя, ищущего роста. Наша главная цель — **упростить сложное (Принцип Маргулана)**, превращая фундаментальные принципы и мудрость великих мыслителей в увлекательный игровой опыт.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+"Wisdom Forge" построен на **прочном фундаменте (Принцип 8)** глубоких принципов. Каждая строка кода, каждый квест — это **долгосрочная инвестиция (Принцип 8)** в **качество (Принцип 3)** и **ценность (Принцип 2)** нашего продукта — вашего личностного роста.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 2. Философия и Миссия: Наше Долгосрочное Видение
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Видение:** Стать ведущей платформой для интерактивного обучения через игру, помогая людям по всему миру усваивать и применять в жизни мудрость и системное мышление.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Миссия:** Предоставить **инструмент (Кузницу)**, позволяющий любому человеку превращать сложные идеи в простые, увлекательные и **полезные** игровые квесты.
 
-## Learn More
+## 3. Об Проекте: "Кузница Мудрости" в Действии
 
-To learn more about Next.js, take a look at the following resources:
+"Wisdom Forge" — это платформа, где вы можете:
+*   **Проходить Квесты:** Выбирайте "Мастера" (например, Маргулан Сейсембай, Илон Маск) и проходите короткие игровые "Пути", состоящие из "Испытаний", каждое из которых иллюстрирует один из его ключевых принципов.
+*   **Собирать Мудрость:** В награду за прохождение вы получаете не очки, а **"Кристаллы Мудрости"** — уникальные цифровые артефакты, содержащие концентрат знаний.
+*   **(В Будущем) Создавать Квесты:** Наша **долгосрочная цель (Принцип 8)** — дать пользователям возможность самим становиться "Мастерами" и создавать квесты на основе своих знаний и принципов.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 4. Технологический Стек: Инструменты для Создания Актива
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+*   **Язык:** [TypeScript](https://www.typescriptlang.org/)
+*   **Бэкенд:** [Node.js](https://nodejs.org/), [NestJS](https://nestjs.com/)
+*   **Фронтенд:** [React](https://react.dev/), [Next.js](https://nextjs.org/)
+*   **API:** [GraphQL](https://graphql.org/)
+*   **База Данных:** [PostgreSQL](https://www.postgresql.org/) (через [Neon](https://neon.tech/))
+*   **ORM:** [Prisma](https://www.prisma.io/)
 
-## Deploy on Vercel
+## 5. Как Начать (Для Разработчика)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1.  Клонируйте репозиторий.
+2.  Установите зависимости: `npm install`.
+3.  Настройте переменные окружения: `cp .env.example .env`.
+4.  Настройте базу данных: `cd backend && npx prisma migrate dev`.
+5.  Запустите проект: `turbo run dev`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Более детальная информация находится в [Руководстве по Разработке (DocDevIn.md)](./DocDevIn.md).
+
+## 6. Документация: Наша Система Знаний
+
+*   [**Документация Требований (DocReq.md):**](./DocReq.md) Что мы строим (правила квестов, испытаний).
+*   [**Техническая Документация (DocTech.md):**](./DocTech.md) Как мы это строим (архитектура, схема БД).
+*   [**Манифест "Cohesive" (TheCohesiveManifesto.md):**](./TheCohesiveManifesto.md) Почему наш UI выглядит именно так.

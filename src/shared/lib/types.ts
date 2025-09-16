@@ -1,5 +1,7 @@
 // src/lib/types.ts
 
+import { useAnimationControls } from 'framer-motion';
+
 export type ImageMap = { [key: string]: string };
 
 // Тип для декоративного изображения с размерами
@@ -40,3 +42,9 @@ export interface Question {
 }
 
 export type QuestionData = Question[];
+
+export interface MotionTrailProps {
+  trailControls: ReturnType<typeof useAnimationControls>;
+}
+
+export type GamePhase = 'intro' | 'countdown' | 'playing' | 'lost' | 'won'

@@ -1,4 +1,5 @@
 import type { QuestionData } from './types';
+import { Variants, stagger } from 'framer-motion';
 
 export const authors = ['Нiкiта', 'Алiса'];
 
@@ -144,3 +145,131 @@ export const variantsQuestions: QuestionData = [
     ],
   },
 ];
+
+export const startQuestData = {
+    h1: "Секретне повідомлення для Дані",
+    inscriptionBtn: "Start the quest"
+}
+
+export const wishText = `
+    Дорогий Даню,
+
+    З Днем Народження!
+    
+    Ти щойно пройшов мій маленький квест, і це не просто гра. Це метафора того, як ти йдеш по життю: сміливо, вирішуючи завдання і ніколи не здаючись.
+    
+    (Принцип 13: Наполегливість)
+    Пам'ятай, як у Geometry Dash: іноді, щоб пройти складний рівень, потрібна сотня спроб. Але кожна спроба — це не програш, а збір даних. Кожен провал — це крок до перемоги. Ніколи не бійся падати, головне — завжди піднімайся і пробуй знову.
+    
+    (Принцип 1: Постійне Навчання)
+    Життя — це найбільша гра з нескінченними "ачівками". Кожна нова навичка, яку ти освоюєш — у Roblox Studio, у навчанні, у спорті — це твій новий "скіл", який робить тебе сильнішим. Ніколи не припиняй вчитися та "прокачувати" свого "персонажа".
+    
+    (Принцип 10: Створення Активів)
+    Ти дивовижна і творча людина. Все, що ти створюєш — світи в Roblox, ідеї, дружбу — це твої "активи". Це те, що буде працювати на тебе і приносити радість тобі та іншим. Цінуй те, що ти створюєш.
+    
+    (Принцип 5: Здоров'я як Фундамент)
+    Щоб перемагати у найскладніших "рейдах", твоєму герою потрібна енергія. Дбай про себе: добре спи, гуляй на свіжому повітрі та правильно харчуйся. Твоє здоров'я — це твій головний "енергетичний щит".
+    
+    Даню, я вірю в тебе більше, ніж будь-хто. Ти можеш досягти абсолютно всього, чого забажаєш, тому що в тебе є найголовніше — розум, наполегливість і добре серце.
+    
+    Це твій квест, і я знаю, ти пройдеш його блискуче.
+    
+    З любов'ю,
+    твій брат Микита.
+  `;
+
+export const TRAIL_VARIANTS: Variants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: { 
+    pathLength: 1, 
+    opacity: 1,
+    transition: { duration: 0.2, ease: 'easeOut' } 
+  },
+  exit: { 
+    pathLength: 0, 
+    opacity: 0,
+    transition: { duration: 0.1, ease: 'easeIn' } 
+  },
+};
+
+export const variantVisible = {
+  visible: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      delayChildren: stagger(0.1),
+      duration: 0.1,
+      times: [0, 0.1, 0.2]
+    },
+    x: 1,
+    y: 5,
+    scale: 1.1
+  },
+  hidden: {
+    opacity: 0,
+    transition: {
+      when: 'afterChildren',
+      delayChildretrn: stagger(0.1),
+    },
+    speed: 10,
+  }
+}
+
+export const title = "З Днем Народження, Даня!";
+export const titleVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.08, // Анимация по буквам
+        },
+    },
+}
+export const letterVariants: Variants = {
+    hidden: { opacity: 0, y: -20, scale: 1.5 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { type: 'spring', damping: 12, stiffness: 100 },
+    },
+}
+export const ballVariants: Variants = {
+    hidden: { y: '-100vh', opacity: 0 },
+    visible: (i: number) => ({
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: 'spring',
+            stiffness: 50,
+            delay: 0.1 + i * 0.05, // Разная задержка для падения
+        },
+    }),
+}
+export const balls = [
+    { top: '10%', left: '15%', rotate: -15 },
+    { top: '20%', right: '10%', rotate: 15 },
+    { bottom: '15%', left: '20%', rotate: -25 },
+    { bottom: '10%', right: '25%', rotate: 20 },
+];
+
+export const levelData = [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0];
+
+export const answerContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+export const answerItemVariants: Variants = {
+  hidden: { opacity: 0, y: 50 }, // Вылетают снизу
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { type: 'spring', stiffness: 300 }, // С эффектом пружины
+  },
+};
